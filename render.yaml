@@ -10,7 +10,7 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: FRONTEND_ORIGIN
-        sync: false
+        value: https://zonestudiophotographey-web.github.io
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
@@ -18,5 +18,5 @@ services:
       - key: CLOUDINARY_API_SECRET
         sync: false
       - key: STUDIO_UPLOAD_KEY
-        sync: false
+        generateValue: true
 
