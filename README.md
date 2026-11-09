@@ -17,4 +17,3 @@ The Flask API creates its Neon tables at startup. It provides `/api/health`, `/a
 For local development, install `backend/requirements.txt`, set the environment variables, then run `flask --app app run` from `backend/`. Serve `frontend/` over HTTP and set its `api-config.js` URL to `http://localhost:5000`.
 
 Admin authorization, booking retrieval for customer accounts, email notifications, and payment processing are not included. The existing demo admin PIN is frontend-only and is not production security.
-
