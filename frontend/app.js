@@ -10,6 +10,7 @@ let currentScreen = 'home';
 let galleryFilter = 'All';
 let isAdmin = store.get('zoneAdmin', false);
 const currencyOptions = [{code:'USD',label:'US Dollar ($)'},{code:'INR',label:'Indian Rupee (₹)'},{code:'UGX',label:'Ugandan Shilling (USh)'}];
+const inrExchangeRates = {USD:0.01065,INR:1,UGX:43.72};
 let selectedCurrency = store.get('zoneCurrency','INR');
 let selectedServiceId = '';
 let selectedSubservice = '';
@@ -40,6 +41,8 @@ function setScreen(screen){
 }
 function currencyPicker(){return `<label class="currency-control">Display currency <select data-currency>${currencyOptions.map(c=>`<option value="${c.code}" ${selectedCurrency===c.code?'selected':''}>${c.label}</option>`).join('')}</select></label>`}
 function quoteLabel(service){const price=service.prices?.[selectedCurrency];if(price==null)return 'Request a quote';const formatted=new Intl.NumberFormat(undefined,{style:'currency',currency:selectedCurrency,maximumFractionDigits:0}).format(price);return selectedCurrency==='INR'?`From ${formatted}`:formatted}
+function currencyPicker(){return `<div class="currency-picker-wrap"><label class="currency-control">Display currency <select data-currency>${currencyOptions.map(c=>`<option value="${c.code}" ${selectedCurrency===c.code?'selected':''}>${c.label}</option>`).join('')}</select></label><small class="currency-note">USD and UGX amounts are indicative conversions from INR.</small></div>`}
+function quoteLabel(service){let price=service.prices?.[selectedCurrency];if(price==null&&service.startPrices?.INR!=null)price=service.startPrices.INR*inrExchangeRates[selectedCurrency];if(price==null)return 'Request a quote';const formatted=new Intl.NumberFormat(selectedCurrency==='INR'?'en-IN':selectedCurrency==='UGX'?'en-UG':'en-US',{style:'currency',currency:selectedCurrency,maximumFractionDigits:selectedCurrency==='USD'?2:0}).format(price);return `From ${formatted}`}
 function serviceCards(){return services.map(s=>`<article class="service-card"><button class="service-card-image" data-explore-service="${s.id}" aria-label="Explore ${s.name}"><img src="${s.image}" alt="${s.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=85'"><span class="service-card-index">${s.number} <b>↗</b></span></button><div class="service-card-copy"><div class="service-card-icon">${s.icon}</div><span class="service-card-discipline">${s.number} / ${s.discipline}</span><h3>${s.name}</h3><p>${s.description}</p><div class="service-card-footer"><strong data-price-for="${s.id}">${quoteLabel(s)}</strong><button class="service-explore" data-explore-service="${s.id}">Explore service <span>↗</span></button></div></div></article>`).join('')}
 function home(){return `
 <section class="hero"><div class="hero-content"><div class="eyebrow">Photography · Creative Production</div><h1>Capturing Moments.<em>Creating Memories.</em></h1><p>Professional photography, videography and creative production for life's most important moments.</p><div class="hero-actions"><button class="btn" data-screen="book">▣ &nbsp;Book a Photoshoot</button><button class="btn secondary" data-screen="gallery">▧ &nbsp;Explore Portfolio</button></div></div></section>
