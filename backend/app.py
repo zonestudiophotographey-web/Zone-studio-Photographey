@@ -36,8 +36,10 @@ def initialize_db():
         conn.execute("""CREATE TABLE IF NOT EXISTS bookings (
             id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT NOT NULL,
             service TEXT NOT NULL, date DATE NOT NULL, time TEXT NOT NULL, location TEXT NOT NULL DEFAULT '',
-            package TEXT NOT NULL, notes TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'Pending',
+            package TEXT NOT NULL, notes TEXT NOT NULL DEFAULT '', payment_method TEXT NOT NULL DEFAULT '',
+            status TEXT NOT NULL DEFAULT 'Pending',
             created_at TIMESTAMPTZ NOT NULL DEFAULT now())""")
+        conn.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_method TEXT NOT NULL DEFAULT ''")
 
 
 @app.get("/api/health")
@@ -81,10 +83,11 @@ def create_booking():
     if any(not str(data.get(key, "")).strip() for key in required):
         return jsonify(error="Please complete all required booking fields."), 400
     with db() as conn:
-        row = conn.execute("""INSERT INTO bookings(name,email,phone,service,date,time,location,package,notes)
-            VALUES (%(name)s,%(email)s,%(phone)s,%(service)s,%(date)s,%(time)s,%(location)s,%(package)s,%(notes)s)
-            RETURNING id,name,email,phone,service,date,time,location,package,notes,status,created_at""",
-            {**data, "location": data.get("location", ""), "notes": data.get("notes", "")}).fetchone()
+        row = conn.execute("""INSERT INTO bookings(name,email,phone,service,date,time,location,package,notes,payment_method)
+            VALUES (%(name)s,%(email)s,%(phone)s,%(service)s,%(date)s,%(time)s,%(location)s,%(package)s,%(notes)s,%(payment_method)s)
+            RETURNING id,name,email,phone,service,date,time,location,package,notes,payment_method,status,created_at""",
+            {**data, "location": data.get("location", ""), "notes": data.get("notes", ""),
+             "payment_method": data.get("payment_method", "")}).fetchone()
     booking = dict(row)
     booking["id"] = f"BK-{booking['id']}"
     booking["date"] = str(booking["date"])
@@ -109,3 +112,4 @@ initialize_db()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
+
