@@ -195,3 +195,49 @@
   .about-footer:before,.about-footer:after{width:8%}
 }
 @media(prefers-reduced-motion:reduce){.value-grid article,.about-footer .btn{transition:none}}
+
+
+/* Living background accents and entrance motion for the About page */
+.about-hero{animation:aboutHeroArrive .85s cubic-bezier(.2,.7,.25,1) both}
+.about-hero:before{
+  background-size:cover,cover,112% auto;
+  animation:aboutPhotoDrift 24s ease-in-out infinite alternate;
+}
+.about-hero:after{animation:aboutOrbit 22s linear infinite}
+.about-hero .about-eyebrow{display:flex;align-items:center;gap:12px}
+.about-hero .about-eyebrow:before{content:"";width:34px;height:1px;background:#d4b36c;box-shadow:0 0 14px #d4b36c}
+.about-hero .about-lead{position:relative;padding-left:17px}
+.about-hero .about-lead:before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:2px;background:#d4b36c}
+.about-section,.about-purpose article,.about-why,.about-footer{animation:aboutRise .75s cubic-bezier(.2,.7,.25,1) both}
+.about-section:nth-of-type(2){animation-delay:.08s}
+.about-section:nth-of-type(3){animation-delay:.14s}
+.about-section:nth-of-type(4){animation-delay:.2s}
+.about-section:nth-of-type(5){animation-delay:.26s}
+.about-section:nth-of-type(6){animation-delay:.32s}
+.about-section:nth-of-type(7){animation-delay:.38s}
+.about-locations article{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.about-locations article:hover{transform:translateY(-5px);border-color:#bd9a5d;box-shadow:0 18px 36px #21190c13}
+.about-locations article:after{animation:aboutLocationGlow 7s ease-in-out infinite alternate}
+.about-founder:after{animation:aboutFounderMark 16s ease-in-out infinite alternate}
+.about-purpose article{transition:transform .25s ease,box-shadow .25s ease}
+.about-purpose article:hover{transform:translateY(-4px);box-shadow:0 20px 42px #17151012}
+.about-why:after{content:"";position:absolute;width:180px;height:180px;right:-70px;top:-72px;border:1px solid #b8955845;border-radius:50%;box-shadow:0 0 0 18px #b8955809,0 0 0 38px #b8955808;animation:aboutOrbit 28s linear infinite reverse}
+.about-footer{background-size:200% 200%;animation:aboutRise .75s both,aboutFooterGlow 12s ease-in-out infinite alternate}
+@keyframes aboutHeroArrive{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes aboutRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes aboutPhotoDrift{0%{background-position:center,center,48% 44%}100%{background-position:center,center,58% 52%}}
+@keyframes aboutOrbit{to{transform:rotate(360deg)}}
+@keyframes aboutLocationGlow{from{transform:translate(0,0)}to{transform:translate(-8px,-8px)}}
+@keyframes aboutFounderMark{from{transform:rotate(-8deg) translateY(0)}to{transform:rotate(8deg) translateY(-18px)}}
+@keyframes aboutFooterGlow{from{background-position:0% 50%}to{background-position:100% 50%}}
+@media(max-width:640px){
+ .about-hero:before{background-size:cover,cover,cover;animation-duration:34s}
+ .about-section:nth-of-type(n){animation-delay:0s}
+ .about-founder:after{right:-25%;font-size:300px}
+}
+@media(prefers-reduced-motion:reduce){
+ .about-hero,.about-hero:before,.about-hero:after,.about-section,.about-purpose article,.about-why,.about-footer,.about-locations article:after,.about-founder:after{
+  animation:none!important;scroll-behavior:auto!important
+ }
+ .about-locations article,.about-purpose article,.value-grid article,.about-footer .btn{transition:none}
+}
