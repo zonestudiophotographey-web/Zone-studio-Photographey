@@ -26,7 +26,11 @@ const services = [
   {id:'event-production',number:'08',discipline:'COMPLETE EXPERIENCES',name:'Event & Special Production',icon:'✦',image:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=85',description:'Creative event production and media coordination for celebrations and special occasions.',startPrices:{USD:null,INR:6500,UGX:null},subservices:['Event Production','Stage & Backdrop Production','Launches & Award Shows','Conference Production','Event Photography & Video','Full Event Media Package']}
 ].map(service=>({...service,prices:service.startPrices,subservices:service.subservices.map(name=>({name,prices:{USD:null,INR:null,UGX:null},packages:['Basic','Golden','Premium'].map(packageName=>{const priceINR=service.id==='photography'?photographyPackagePricesINR[packageName]:null;return {name:packageName,prices:{USD:priceINR==null?null:priceINR*inrExchangeRates.USD,INR:priceINR,UGX:priceINR==null?null:priceINR*inrExchangeRates.UGX}}})}))}));
 const portfolio = [
-  ['Graduation','https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=700&q=80'],
+  ['Graduation','./Services/1.%20photography%20Service/Graduation%20Photography/graduation-14-2.jpg'],
+  ['Graduation','./Services/1.%20photography%20Service/Graduation%20Photography/graduation-31.jpg'],
+  ['Graduation','./Services/1.%20photography%20Service/Graduation%20Photography/graduation-mens-portrait.jpg'],
+  ['Graduation','./Services/1.%20photography%20Service/Graduation%20Photography/graduation-img3594.jpg'],
+  ['Graduation','./Services/1.%20photography%20Service/Graduation%20Photography/graduation-img3605.jpg'],
   ['Weddings','https://images.unsplash.com/photo-1519741497674-611481863552?w=700&q=80'],
   ['Portraits','https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=700&q=80'],
   ['Products','https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&q=80'],
