@@ -39,12 +39,12 @@ const portfolio = [
   ['Fashion','./Services/1.%20photography%20Service/Fashion%20%26%20Model%20Photography/fashion-copy14.jpg'],
   ['Fashion','./Services/1.%20photography%20Service/Fashion%20%26%20Model%20Photography/fashion-img3436.jpg'],
   ['Fashion','./Services/1.%20photography%20Service/Fashion%20%26%20Model%20Photography/fashion-3.jpg'],
-  ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7233.jpg'],
+  ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7233-portrait.jpg'],
   ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7256.jpg'],
   ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7180.jpg'],
-  ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7203.jpg'],
+  ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7203-portrait.jpg'],
   ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7226.jpg'],
-  ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7195.jpg']
+  ['Event','./Services/1.%20photography%20Service/Event%20Photography/event-img7195-portrait.jpg']
 ];
 const bookings = () => store.get('zoneBookings', []);
 function notify(message){toastEl.textContent=message;toastEl.classList.add('show');setTimeout(()=>toastEl.classList.remove('show'),2400)}
