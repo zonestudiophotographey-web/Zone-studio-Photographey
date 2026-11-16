@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 31374)
-Total output lines: 536
-
 const main = document.getElementById('appMain');
 const toastEl = document.getElementById('toast');
 const API_BASE = (window.ZONE_API_BASE || '').replace(/\/$/, '');
@@ -323,7 +320,48 @@ document.addEventListener('click',e=>{
  const bookService=e.target.closest('[data-book-service]');if(bookService){selectedServiceId=bookService.dataset.bookService;selectedSubservice='';setScreen('book');return}
  const bookSubservice=e.target.closest('[data-book-subservice]');if(bookSubservice){selectedServiceId=bookSubservice.dataset.bookSubservice;selectedSubservice=bookSubservice.dataset.subservice;setScreen('book');return}
  const filter=e.target.closest('[data-filter]');if(filter){galleryFilter=filter.dataset.filter;render();return}
- const photoId=e.target.closest('[data-photo-id]');if(photoId){const record=galleryRecords.find(item=>item.id===photoId.dataset.photoId&&!item.removed);if(record)showModal(record.title,`<div class="image-detail-preview"><img src="${escapeHTML(record.url||record.sourcePath)}" alt="${escapeHTML(record.title)}" onerror="galleryImageError(this)"></div><p class="gallery-modal-category">${escapeHTML(record.category)}</p><p class="muted">${escapeHTML(record.description||record.fileName|…1374 tokens truncated…get))dropzone.classList.remove('is-dragging');
+ const photoId=e.target.closest('[data-photo-id]');if(photoId){const record=galleryRecords.find(item=>item.id===photoId.dataset.photoId&&!item.removed);if(record)showModal(record.title,`<div class="image-detail-preview"><img src="${escapeHTML(record.url||record.sourcePath)}" alt="${escapeHTML(record.title)}" onerror="galleryImageError(this)"></div><p class="gallery-modal-category">${escapeHTML(record.category)}</p><p class="muted">${escapeHTML(record.description||record.fileName||'')}</p>`);else notify('That gallery image is no longer available');return}
+ const photo=e.target.closest('[data-photo]');if(photo){showModal(photo.dataset.caption,`<img src="${photo.dataset.photo}" style="width:100%;border-radius:10px;max-height:55vh;object-fit:cover">`);return}
+ const action=e.target.closest('[data-action]')?.dataset.action;
+ if(action==='pickImages'){document.getElementById('galleryFileInput')?.click();return}
+ if(action==='removeDraft'){const draft=galleryDrafts.find(item=>item.id===e.target.closest('[data-draft-id]')?.dataset.draftId);if(draft)URL.revokeObjectURL(draft.url);galleryDrafts=galleryDrafts.filter(item=>item!==draft);render();return}
+ if(action==='saveDrafts'){saveGalleryDrafts();return}
+ if(action==='editGalleryImage'){editGalleryImage(e.target.closest('[data-image-id]')?.dataset.imageId);return}
+ if(action==='bulkMove'){const category=document.getElementById('bulkMoveCategory')?.value;if(galleryCategories.includes(category))moveGallerySelection(category);else notify('Choose a valid service category');return}
+ if(action==='bulkRemove'){removeGallerySelection();return}
+ if(action==='login'||action==='register'){const reg=action==='register';showModal(reg?'Create account':'Welcome back',`<form id="authForm" data-register="${reg}"><div class="field"><label>Full Name</label><input name="name" ${reg?'required':'placeholder="Your name"'}></div><div class="field"><label>Email Address</label><input name="email" type="email" required></div><div class="field"><label>Password</label><input name="password" type="password" required minlength="8"></div><button class="btn full" type="submit">${reg?'Register':'Login'}</button></form><p class="muted">Create an account or sign in to Zone Studio.</p>`);return}
+ if(action==='logout'){store.set('zoneUser',null);notify('You have been logged out');render();return}
+
+ if(action==='adminExit'){isAdmin=false;store.set('zoneAdmin',false);setScreen('profile');return}
+ if(action==='downloadAlbum'){notify('Connect gallery storage to enable ZIP downloads');return}
+ if(action==='shareAlbum'){if(navigator.share)navigator.share({title:'ZONE STUDIO Graduation 2025',text:'View this Zone Studio gallery'}).catch(()=>{});else notify('Share is not supported on this device');return}
+ if(action==='closeModal')e.target.closest('.modal-backdrop')?.remove();
+});
+document.addEventListener('change',e=>{
+ if(e.target.matches('[data-currency]')){selectedCurrency=e.target.value;store.set('zoneCurrency',selectedCurrency);document.querySelectorAll('[data-currency]').forEach(select=>select.value=selectedCurrency);document.querySelectorAll('[data-price-for]').forEach(node=>{const service=services.find(item=>item.id===node.dataset.priceFor);if(service)node.textContent=node.hasAttribute('data-booking-quote')?`Pricing: ${quoteLabel(service)} · Your final quote will be confirmed by our team.`:quoteLabel(service)});document.querySelectorAll('[data-package-price]').forEach(node=>{const service=services.find(item=>item.id===node.dataset.serviceId);const option=service?.subservices[Number(node.dataset.subserviceIndex)]?.packages[Number(node.dataset.packageIndex)];if(option)node.textContent=packagePriceLabel(option)});updateBookingPrice(document.getElementById('bookingForm'));return}
+ if(e.target.matches('[data-booking-service]')){selectedServiceId=e.target.value;selectedSubservice='';const service=services.find(item=>item.id===selectedServiceId);const options=e.target.form.querySelector('[data-booking-subservice]');options.innerHTML=`<option value="">${service?'Select an option':'Choose a service first'}</option>${service?.subservices.map(item=>`<option>${item.name}</option>`).join('')||''}`;const packageSelect=e.target.form.querySelector('[data-booking-package]');if(packageSelect)packageSelect.value='';const quote=e.target.form.querySelector('[data-booking-quote]');if(quote){quote.dataset.priceFor=service?.id||'';quote.textContent=`Pricing: ${service?quoteLabel(service):'Request a quote'} · Your final quote will be confirmed by our team.`}updateBookingPrice(e.target.form);return}
+ if(e.target.matches('[data-booking-subservice]')){selectedSubservice=e.target.value;const packageSelect=e.target.form.querySelector('[data-booking-package]');if(packageSelect)packageSelect.value='';updateBookingPrice(e.target.form);return}
+ if(e.target.matches('[data-booking-package]')){updateBookingPrice(e.target.form);return}
+ if(e.target.id==='galleryFileInput'){addGalleryFiles(e.target.files);e.target.value='';return}
+ if(e.target.matches('[data-draft-category]')){const draft=galleryDrafts.find(item=>item.id===e.target.dataset.draftCategory);if(draft)draft.category=e.target.value;return}
+ if(e.target.matches('[data-gallery-select]')){const id=e.target.dataset.gallerySelect;if(e.target.checked)selectedGalleryImages.add(id);else selectedGalleryImages.delete(id);render();return}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id!=='gallerySearch')return;
+ gallerySearch=e.target.value;
+ const cursor=e.target.selectionStart;
+ render();
+ const search=document.getElementById('gallerySearch');
+ search?.focus();
+ if(search&&cursor!==null)search.setSelectionRange(cursor,cursor);
+});
+document.addEventListener('dragover',e=>{
+ const dropzone=e.target.closest('[data-dropzone]');
+ if(dropzone){e.preventDefault();dropzone.classList.add('is-dragging')}
+});
+document.addEventListener('dragleave',e=>{
+ const dropzone=e.target.closest('[data-dropzone]');
+ if(dropzone&&!dropzone.contains(e.relatedTarget))dropzone.classList.remove('is-dragging');
 });
 document.addEventListener('drop',e=>{
  const dropzone=e.target.closest('[data-dropzone]');
