@@ -1,19 +1,17 @@
-# ZONE STUDIO app
+# ZONE STUDIO
 
-The project is separated for independent hosting:
+The website uses a static frontend and a Flask API backed by PostgreSQL. The frontend's `api-config.js` contains the public API URL.
 
-- `frontend/` is the static HTML, CSS, JavaScript, and assets. Deploy this folder with GitHub Pages.
-- `backend/` is the Python Flask API. The root `render.yaml` configures Render to use this folder as a web service.
+## Administrator access
 
-## Connect the deployments
+Customer accounts are created through the website. Public registration cannot create administrator accounts.
 
-1. In Render, create a Blueprint from this repository using the root `render.yaml`. It sets `backend/` as the service root and starts Gunicorn.
-2. Add the backend environment variables from `backend/.env.example` in Render: Neon `DATABASE_URL`, the GitHub Pages origin in `FRONTEND_ORIGIN`, Cloudinary credentials, and a long random `STUDIO_UPLOAD_KEY`.
-3. Set `window.ZONE_API_BASE` in `frontend/api-config.js` to the Render service URL, such as `https://zone-studio-api.onrender.com` (no trailing slash).
-4. Enable GitHub Pages with GitHub Actions as the source. The workflow at `.github/workflows/pages.yml` publishes `frontend/` after each push to `main`. Booking submissions and registration/login requests will then go to Flask.
+To bootstrap the first administrator, set `INITIAL_ADMIN_EMAIL`, `INITIAL_ADMIN_PASSWORD` (at least 14 characters), and `INITIAL_ADMIN_NAME` on the backend service, then restart or deploy it. The API inserts this account only if the email is not already registered; it does not reset the password on later restarts. Choose an email that is not already used by a customer account. After creation, remove the three bootstrap variables from the hosting environment. Keep the password in the host's secret settings, not in this repository.
 
-The Flask API creates its Neon tables at startup. It provides `/api/health`, `/api/bookings`, `/api/auth/register`, `/api/auth/login`, and the protected Cloudinary image endpoint `/api/images`. Keep Neon and Cloudinary secrets in Render environment settings; only the public Render URL belongs in the frontend.
+## Backend settings
 
-For local development, install `backend/requirements.txt`, set the environment variables, then run `flask --app app run` from `backend/`. Serve `frontend/` over HTTP and set its `api-config.js` URL to `http://localhost:5000`.
+Set `DATABASE_URL`, `FRONTEND_ORIGIN`, and the Cloudinary credentials (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`). Cloudinary is required for admin photo uploads. See `backend/.env.example` for the variable names.
 
-Admin authorization, booking retrieval for customer accounts, email notifications, and payment processing are not included. The existing demo admin PIN is frontend-only and is not production security.
+The administrator workspace manages customers, bookings and statuses, services, categorized photo uploads, and contact messages. Customer accounts can update profile details and see their own booking activity. This site does not process payments.
+
+For local development, install `backend/requirements.txt`, configure the environment values, run `flask --app app run` from `backend/`, and serve `frontend/` over HTTP.
